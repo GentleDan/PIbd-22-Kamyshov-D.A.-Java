@@ -2,6 +2,6 @@ package com.company;
 
 public class Main {
     public static void main(String[] args) {
-        ExcavatorForm form = new ExcavatorForm();
+        CampForm form = new CampForm();
     }
 }

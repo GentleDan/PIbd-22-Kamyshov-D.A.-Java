@@ -20,5 +20,4 @@ public class DrawPicture extends JPanel {
     public Transport getCar() {
         return transport;
     }
-
 }

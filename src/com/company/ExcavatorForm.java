@@ -109,4 +109,10 @@ public class ExcavatorForm {
         draw.setBounds(0, 0, 900, 500);
         frame.repaint();
     }
+
+    public void setTracked(Transport transport) {
+        this.transport = transport;
+        draw.setTransport(transport);
+        frame.repaint();
+    }
 }
