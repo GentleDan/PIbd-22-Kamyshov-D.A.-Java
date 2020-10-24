@@ -5,31 +5,35 @@ import java.awt.*;
 
 public class ExcavatorForm {
 
-    private JButton createButton;
+    private JButton createTrackedButton;
+    private JButton createExcavatorButton;
     private JButton upButton;
     private JButton leftButton;
     private JButton rightButton;
     private JButton downButton;
-    private JComboBox<Integer> choiceButton;
-    private Excavator excavator;
+    private JComboBox<String> choiceCountTrackButton;
+    private JComboBox<String> choiceAddingButton;
+    private Transport transport;
     private JFrame frame;
     private DrawPicture draw;
 
     public void direction(JButton button) {
         String temp = button.getName();
-        switch (temp) {
-            case "Up":
-                excavator.moveTrans(Direction.Up);
-                break;
-            case "Down":
-                excavator.moveTrans(Direction.Down);
-                break;
-            case "Left":
-                excavator.moveTrans(Direction.Left);
-                break;
-            case "Right":
-                excavator.moveTrans(Direction.Right);
-                break;
+        if (transport != null) {
+            switch (temp) {
+                case "Up":
+                    transport.moveTransport(Direction.Up);
+                    break;
+                case "Down":
+                    transport.moveTransport(Direction.Down);
+                    break;
+                case "Left":
+                    transport.moveTransport(Direction.Left);
+                    break;
+                case "Right":
+                    transport.moveTransport(Direction.Right);
+                    break;
+            }
         }
         frame.repaint();
     }
@@ -59,27 +63,30 @@ public class ExcavatorForm {
         leftButton.setBounds(750, 350, 30, 30);
         leftButton.addActionListener(e -> direction(leftButton));
 
-        upButton.setEnabled(false);
-        downButton.setEnabled(false);
-        rightButton.setEnabled(false);
-        leftButton.setEnabled(false);
-
-        createButton = new JButton("Create");
-        createButton.setBounds(0, 0, 90, 30);
-        createButton.addActionListener(e -> {
-            excavator = new Excavator(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.BLACK,
-                    Color.YELLOW, true, true, false, choiceButton.getSelectedIndex() + 4);
-            excavator.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
-            upButton.setEnabled(true);
-            downButton.setEnabled(true);
-            rightButton.setEnabled(true);
-            leftButton.setEnabled(true);
-            draw.setCar(excavator);
+        createTrackedButton = new JButton("Create Tracked");
+        createTrackedButton.setBounds(0, 0, 130, 30);
+        createTrackedButton.addActionListener(e -> {
+            transport = new TrackedVehicle(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.YELLOW);
+            transport.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
+            draw.setTransport(transport);
             frame.repaint();
         });
 
-        choiceButton = new JComboBox<>(new Integer[]{4, 5, 6});
-        choiceButton.setBounds(0, 40, 90, 30);
+        createExcavatorButton = new JButton("Create Excavator");
+        createExcavatorButton.setBounds(150, 0, 140, 30);
+        createExcavatorButton.addActionListener(e -> {
+            transport = new Excavator(100 + ((int) (Math.random() * 300)), 1000 + ((int) (Math.random() * 2000)), Color.YELLOW, Color.YELLOW,
+                    true, true, false, choiceAddingButton.getSelectedIndex(), choiceCountTrackButton.getSelectedIndex());
+            transport.setPosition(10 + ((int) (Math.random() * 100)), 10 + ((int) (Math.random() * 100)), 900, 500);
+            draw.setTransport(transport);
+            frame.repaint();
+        });
+
+        choiceAddingButton = new JComboBox<>(new String[]{"Circle", "Cross", "Rectangle"});
+        choiceAddingButton.setBounds(0, 40, 130, 30);
+
+        choiceCountTrackButton = new JComboBox<>(new String[]{"4 track", "5 track", "6 track"});
+        choiceCountTrackButton.setBounds(150, 40, 130, 30);
     }
 
     public ExcavatorForm() {
@@ -90,12 +97,14 @@ public class ExcavatorForm {
         frame.setVisible(true);
         frame.setResizable(false);
         initialization();
-        frame.getContentPane().add(createButton);
+        frame.getContentPane().add(createTrackedButton);
+        frame.getContentPane().add(createExcavatorButton);
         frame.getContentPane().add(upButton);
         frame.getContentPane().add(downButton);
         frame.getContentPane().add(leftButton);
         frame.getContentPane().add(rightButton);
-        frame.getContentPane().add(choiceButton);
+        frame.getContentPane().add(choiceAddingButton);
+        frame.getContentPane().add(choiceCountTrackButton);
         frame.getContentPane().add(draw);
         draw.setBounds(0, 0, 900, 500);
         frame.repaint();
