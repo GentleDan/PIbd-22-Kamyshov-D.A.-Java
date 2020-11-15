@@ -93,7 +93,6 @@ public class ExcavatorForm {
         draw = new DrawPicture();
         frame = new JFrame("Экскаватор");
         frame.setSize(900, 500);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
         initialization();

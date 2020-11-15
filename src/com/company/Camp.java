@@ -1,10 +1,14 @@
 package com.company;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Camp<T extends Transport, G extends Adding> {
 
-    private final Object[] places;
+    private final List<T> places;
+
+    private final int maxCount;
 
     private final int pictureWidth;
 
@@ -15,43 +19,29 @@ public class Camp<T extends Transport, G extends Adding> {
     private final int placeSizeHeight = 160;
 
     public Camp(int picWidth, int picHeight) {
-        int width = picWidth / placeSizeWidth;
-        int height = picHeight / placeSizeHeight;
-        places = new Object[width * height];
         pictureWidth = picWidth;
         pictureHeight = picHeight;
+        int width = picWidth / placeSizeWidth;
+        int height = picHeight / placeSizeHeight;
+        maxCount = width * height;
+        places = new ArrayList<>();
     }
 
     public boolean add(T vehicle) {
-        int changeHeight = 10;
-        int width = pictureWidth / placeSizeWidth;
-
-        for (int i = 0; i < places.length; i++) {
-            if (CheckFreePlace(i)) {
-                vehicle.setPosition(i / width * placeSizeWidth + changeHeight,
-                        i % width * placeSizeHeight + changeHeight, pictureWidth,
-                        pictureHeight);
-                places[i] = vehicle;
-                return true;
-            }
+        if (places.size() < maxCount) {
+            places.add(vehicle);
+            return true;
         }
         return false;
     }
 
     public T delete(int index) {
-        if (index < 0 || index > places.length) {
-            return null;
-        }
-        if (!CheckFreePlace(index)) {
-            T vehicle = (T) places[index];
-            places[index] = null;
-            return vehicle;
+        if (index >= 0 && index < maxCount && places.get(index) != null) {
+            T truck = places.get(index);
+            places.remove(index);
+            return truck;
         }
         return null;
-    }
-
-    private boolean CheckFreePlace(int indexPlace) {
-        return places[indexPlace] == null;
     }
 
     public boolean equal(int count) {
@@ -65,22 +55,20 @@ public class Camp<T extends Transport, G extends Adding> {
     }
 
     public boolean inequal(int count) {
-        int countPlaces = 0;
-        for (Object object : places) {
-            if (object != null) {
-                countPlaces++;
-            }
+        if (equal(count)) {
+            return true;
         }
-        return countPlaces != count;
+        return false;
     }
 
     public void draw(Graphics g) {
+        int changeHeight = 10;
+        int width = pictureWidth / placeSizeWidth;
         drawMarking(g);
-        for (Object place : places) {
-            if (place != null) {
-                T placeT = (T) place;
-                placeT.draw(g);
-            }
+        for (int i = 0; i < places.size(); i++) {
+            places.get(i).setPosition(i / width * placeSizeWidth + changeHeight,
+                    i % width * placeSizeHeight + changeHeight, pictureWidth, pictureHeight);
+            places.get(i).draw(g);
         }
     }
 
@@ -94,5 +82,13 @@ public class Camp<T extends Transport, G extends Adding> {
             g.drawLine(i * placeSizeWidth, 0, i * placeSizeWidth,
                     (pictureHeight / placeSizeHeight) * placeSizeHeight);
         }
+    }
+
+
+    public T get(int index) {
+        if (index > -1 && index < places.size()) {
+            return places.get(index);
+        }
+        return null;
     }
 }

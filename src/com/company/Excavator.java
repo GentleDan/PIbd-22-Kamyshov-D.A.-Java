@@ -89,7 +89,7 @@ public class Excavator extends TrackedVehicle {
             Ladle_pt_y[7] = startPosY + 40;
             Ladle_pt_y[8] = startPosY + 20;
             Ladle_pt_y[9] = startPosY + 60;
-            g.setColor(mainColor);
+            g.setColor(dopColor);
             g.fillPolygon(Ladle_pt_x, Ladle_pt_y, 10);
             g.setColor(Color.BLACK);
             g.drawPolygon(Ladle_pt_x, Ladle_pt_y, 10);

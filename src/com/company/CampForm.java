@@ -2,28 +2,35 @@ package com.company;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CampForm {
     private JFrame frame;
     private JButton parkTracked;
     private JButton parkExcavator;
     private JButton takeTransport;
-    private JButton compareEquality;
-    private JButton compareInequality;
+    private JButton addCamp;
+    private JButton deleteCamp;
+    private JButton putTransportIntoList;
     private JTextField placeTransport;
     private JTextField countPlaceTransport;
-    private Camp<TrackedVehicle, Adding> camp;
-    private DrawCamp drawCamp;
-    private JPanel groupBox;
-    private JPanel equateGroupBox;
+    private DrawCamps drawCamps;
+    private JPanel groupBoxTake;
+    private JPanel campsGroupBox;
     private JLabel placeText;
     private JLabel placeCountText;
+    private JTextField campsField;
+    private JList<String> listBoxCamps;
     private Border borderTake;
-    private Border borderCompare;
+    private Border borderCamps;
+    private DefaultListModel<String> campList;
+    private List<TrackedVehicle> listTransport;
+    private CampCollection campCollection;
 
     public CampForm() {
         initialization();
-        frame = new JFrame("Стоянка");
+        frame = new JFrame("Стоянки");
         frame.setSize(1200, 564);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -31,123 +38,194 @@ public class CampForm {
         frame.setLayout(null);
         frame.getContentPane().add(parkTracked);
         frame.getContentPane().add(parkExcavator);
-        frame.getContentPane().add(groupBox);
-        frame.getContentPane().add(equateGroupBox);
-        frame.getContentPane().add(drawCamp);
+        frame.getContentPane().add(groupBoxTake);
+        frame.getContentPane().add(drawCamps);
+        frame.getContentPane().add(campsGroupBox);
         frame.repaint();
     }
 
     public void initialization() {
-        camp = new Camp<>(890, 525);
-        drawCamp = new DrawCamp(camp);
+        listTransport = new LinkedList<>();
+        campCollection = new CampCollection(890, 525);
+        drawCamps = new DrawCamps(campCollection);
         borderTake = BorderFactory.createTitledBorder("Забрать транспорт");
-        borderCompare = BorderFactory.createTitledBorder("Сравнить");
+        borderCamps = BorderFactory.createTitledBorder("Стоянки");
         parkTracked = new JButton("Припарковать гусеничную машину");
         parkExcavator = new JButton("Припарковать экскаватор");
-        compareEquality = new JButton("==");
-        compareInequality = new JButton("!=");
+        putTransportIntoList = new JButton("Поместить в список");
+        addCamp = new JButton("Добавить стоянку");
+        deleteCamp = new JButton("Удалить стоянку");
         placeTransport = new JTextField();
         countPlaceTransport = new JTextField();
-        takeTransport = new JButton("Забрать");
+        takeTransport = new JButton("Забрать из списка");
         placeText = new JLabel("Место: ");
         placeCountText = new JLabel("Кол-во: ");
-        groupBox = new JPanel();
-        groupBox.setLayout(null);
-        groupBox.add(placeText);
-        groupBox.add(placeTransport);
-        groupBox.add(takeTransport);
+        campsField = new JTextField();
+        campList = new DefaultListModel<>();
+        listBoxCamps = new JList<>(campList);
+        groupBoxTake = new JPanel();
+        groupBoxTake.setLayout(null);
+        groupBoxTake.add(placeText);
+        groupBoxTake.add(placeTransport);
+        groupBoxTake.add(takeTransport);
+        groupBoxTake.add(putTransportIntoList);
         parkTracked.setBounds(850, 12, 300, 40);
-        parkTracked.addActionListener(e -> createTracked());
+        parkTracked.addActionListener(e -> {
+            createTracked();
+        });
         parkExcavator.setBounds(850, 60, 300, 40);
-        parkExcavator.addActionListener(e -> createExcavator());
-        groupBox.setBounds(930, 150, 150, 100);
-        placeText.setBounds(40, 20, 60, 30);
-        placeTransport.setBounds(85, 20, 30, 30);
-        takeTransport.setBounds(40, 60, 90, 30);
-        takeTransport.addActionListener(e -> takeTracked());
-        groupBox.setBorder(borderTake);
-        drawCamp.setBounds(0, 0, 890, 525);
-        equateGroupBox = new JPanel();
-        equateGroupBox.setLayout(null);
-        equateGroupBox.setBorder(borderCompare);
-        equateGroupBox.add(compareEquality);
-        equateGroupBox.add(compareInequality);
-        equateGroupBox.add(countPlaceTransport);
-        equateGroupBox.add(placeCountText);
-        equateGroupBox.setBounds(930, 300, 150, 150);
+        parkExcavator.addActionListener(e -> {
+            createExcavator();
+        });
+        groupBoxTake.setBounds(880, 110, 250, 160);
+        placeText.setBounds(90, 20, 60, 30);
+        placeTransport.setBounds(135, 20, 30, 30);
+        putTransportIntoList.setBounds(40, 70, 170, 30);
+        putTransportIntoList.addActionListener(e -> {
+            placeIntoListTransport();
+        });
+        takeTransport.setBounds(40, 110, 170, 30);
+        takeTransport.addActionListener(e -> {
+            takeTransportFrame();
+        });
+        groupBoxTake.setBorder(borderTake);
+        drawCamps.setBounds(0, 0, 890, 525);
+        campsGroupBox = new JPanel();
+        campsGroupBox.setLayout(null);
+        campsGroupBox.setBounds(880, 270, 250, 240);
+        campsGroupBox.setBorder(borderCamps);
+        campsField.setBounds(50, 30, 150, 20);
+        listBoxCamps.setBounds(50, 90, 150, 100);
+        listBoxCamps.addListSelectionListener(e -> {
+            changeItemList();
+        });
+        addCamp.setBounds(50, 55, 150, 30);
+        addCamp.addActionListener(e -> {
+            addCamp();
+        });
+        deleteCamp.setBounds(50, 200, 150, 30);
+        deleteCamp.addActionListener(e -> {
+            deleteCamp();
+        });
+        campsGroupBox.add(campsField);
+        campsGroupBox.add(listBoxCamps);
+        campsGroupBox.add(addCamp);
+        campsGroupBox.add(deleteCamp);
         placeCountText.setBounds(40, 20, 60, 30);
         countPlaceTransport.setBounds(85, 20, 30, 30);
-        compareInequality.setBounds(40, 60, 90, 30);
-        compareInequality.addActionListener(e -> compare(compareInequality.getText()));
-        compareEquality.setBounds(40, 100, 90, 30);
-        compareEquality.addActionListener(e -> compare(compareEquality.getText()));
     }
 
     private void createTracked() {
-        JColorChooser colorDialog = new JColorChooser();
-        JOptionPane.showMessageDialog(frame, colorDialog);
-        if (colorDialog.getColor() != null) {
-            TrackedVehicle transport = new TrackedVehicle(100, 1000, colorDialog.getColor());
-            if (camp.add(transport)) {
-                frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Стоянка переполнена");
-            }
-        }
-    }
-
-    private void createExcavator() {
-        JColorChooser colorDialog = new JColorChooser();
-        JOptionPane.showMessageDialog(frame, colorDialog);
-        if (colorDialog.getColor() != null) {
-            JColorChooser otherColorDialog = new JColorChooser();
-            JOptionPane.showMessageDialog(frame, otherColorDialog);
-            if (otherColorDialog.getColor() != null) {
-                TrackedVehicle transport = new Excavator(100, 1000, colorDialog.getColor(), otherColorDialog.getColor(),
-                        true, true, true, 0, 0);
-                if (camp.add(transport)) {
+        if (listBoxCamps.getSelectedIndex() >= 0) {
+            JColorChooser colorDialog = new JColorChooser();
+            JOptionPane.showMessageDialog(frame, colorDialog);
+            if (colorDialog.getColor() != null) {
+                TrackedVehicle transport = new TrackedVehicle(100, 1000, colorDialog.getColor());
+                if (campCollection.get(listBoxCamps.getSelectedValue()).add(transport)) {
                     frame.repaint();
                 } else {
                     JOptionPane.showMessageDialog(frame, "Стоянка переполнена");
                 }
             }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void takeTracked() {
-        if (!placeTransport.getText().equals("")) {
-            try {
-                TrackedVehicle transport = camp.delete(Integer.parseInt(placeTransport.getText()));
-                if (transport != null) {
-                    ExcavatorForm excavatorForm = new ExcavatorForm();
-                    excavatorForm.setTracked(transport);
-                    frame.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Транспорта не существует");
+    private void createExcavator() {
+        if (listBoxCamps.getSelectedIndex() >= 0) {
+            JColorChooser colorDialog = new JColorChooser();
+            JOptionPane.showMessageDialog(frame, colorDialog);
+            if (colorDialog.getColor() != null) {
+                JColorChooser otherColorDialog = new JColorChooser();
+                JOptionPane.showMessageDialog(frame, otherColorDialog);
+                if (otherColorDialog.getColor() != null) {
+                    TrackedVehicle transport = new Excavator(100, 1000, colorDialog.getColor(), otherColorDialog.getColor(),
+                            true, true, true, 0, 0);
+                    if (campCollection.get(listBoxCamps.getSelectedValue()).add(transport)) {
+                        frame.repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Стоянка переполнена");
+                    }
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(frame, "Транспорта не существует");
             }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void compare(String comparison) {
-        int number = Integer.parseInt(countPlaceTransport.getText());
-        if (!countPlaceTransport.getText().equals("")) {
-            if (comparison.equals("==")) {
-                if (camp.equal(number)) {
-                    JOptionPane.showMessageDialog(frame, "Введенное число " + number + " равно количеству занятых мест на стоянке");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Введенное число " + number + " не равно количеству занятых мест на стоянке");
+    private void placeIntoListTransport() {
+        if (listBoxCamps.getSelectedIndex() >= 0) {
+            if (!placeTransport.getText().equals("")) {
+                try {
+                    TrackedVehicle transport = (TrackedVehicle) campCollection.get(listBoxCamps.getSelectedValue()).delete(Integer.parseInt(placeTransport.getText()));
+                    if (transport != null) {
+                        listTransport.add(transport);
+                        frame.repaint();
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Не существующий транспорт", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(frame, "Не существующий транспорт", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            if (comparison.equals("!=")) {
-                if (camp.inequal(number)) {
-                    JOptionPane.showMessageDialog(frame, "Введенное число " + number + " не равно количеству занятых мест на стоянке");
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Введенное число " + number + " равно количеству занятых мест на стоянке");
-                }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void reloadLevels() {
+        int index = listBoxCamps.getSelectedIndex();
+        campList.removeAllElements();
+        int i = 0;
+        for (String name : campCollection.keys()) {
+            campList.add(i, name);
+            i++;
+        }
+        int itemsCount = campList.size();
+        if (itemsCount > 0 && (index < 0 || index >= itemsCount)) {
+            listBoxCamps.setSelectedIndex(0);
+        } else if (index >= 0 && index < itemsCount) {
+            listBoxCamps.setSelectedIndex(index);
+        }
+    }
+
+    private void addCamp() {
+        if (!campsField.getText().equals("")) {
+            campCollection.addCamp(campsField.getText());
+            reloadLevels();
+            frame.repaint();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Введите название стоянки", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteCamp() {
+        if (listBoxCamps.getSelectedIndex() >= 0) {
+            int result = JOptionPane.showConfirmDialog(frame, "Удалить стоянку " + listBoxCamps.getSelectedValue() + "?", "Удаление",
+                    JOptionPane.YES_NO_OPTION);
+            if (result == JOptionPane.YES_OPTION) {
+                campCollection.deleteCamp(listBoxCamps.getSelectedValue());
+                reloadLevels();
+                frame.repaint();
             }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    private void changeItemList() {
+        drawCamps.setSelectedItem(listBoxCamps.getSelectedValue());
+        frame.repaint();
+    }
+
+    private void takeTransportFrame() {
+        if (!listTransport.isEmpty()) {
+            ExcavatorForm excavatorForm = new ExcavatorForm();
+            excavatorForm.setTracked(listTransport.get(0));
+            listTransport.remove(0);
+            frame.repaint();
         }
     }
 }
