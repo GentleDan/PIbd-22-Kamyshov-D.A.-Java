@@ -3,9 +3,7 @@ package com.company;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public class TransportConfigPanel extends JDialog {
 
@@ -346,6 +344,13 @@ public class TransportConfigPanel extends JDialog {
         buttonClear.addActionListener(e -> {
             drawPicture.setTransport(null);
             dispose();
+        });
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                drawPicture.setTransport(null);
+            }
         });
         setVisible(true);
     }
