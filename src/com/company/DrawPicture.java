@@ -17,7 +17,7 @@ public class DrawPicture extends JPanel {
         this.transport = transport;
     }
 
-    public Transport getCar() {
+    public Transport getTransport() {
         return transport;
     }
 }

@@ -8,4 +8,6 @@ public interface Transport {
     void moveTransport(Direction direction);
 
     void draw(Graphics g);
+
+    void setMainColor(Color color);
 }

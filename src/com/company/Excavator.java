@@ -14,6 +14,18 @@ public class Excavator extends TrackedVehicle {
         return startPosX;
     }
 
+    public Color getDopColor() {
+        return dopColor;
+    }
+
+    public Adding getAdding() {
+        return adding;
+    }
+
+    public void setAdding(Adding adding) {
+        this.adding = adding;
+    }
+
     protected void setStartPosX(int startPosX) {
         this.startPosX = startPosX;
     }
@@ -40,6 +52,10 @@ public class Excavator extends TrackedVehicle {
 
     protected void setStand(boolean stand) {
         this.stand = stand;
+    }
+
+    public void setDopColor(Color dopColor) {
+        this.dopColor = dopColor;
     }
 
     public Excavator(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean flasher, boolean ladle, boolean stand, int add, int number) {
@@ -107,6 +123,8 @@ public class Excavator extends TrackedVehicle {
             g.drawRect(startPosX + 70, startPosY + 5, trackedVehicleWidth - 92, trackedVehicleHeight - 85);
         }
         super.draw(g);
-        adding.draw(g, startPosX, startPosY, trackedVehicleWidth, trackedVehicleHeight);
+        if (adding != null) {
+            adding.draw(g, startPosX, startPosY, trackedVehicleWidth, trackedVehicleHeight);
+        }
     }
 }

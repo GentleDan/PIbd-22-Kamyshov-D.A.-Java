@@ -7,8 +7,7 @@ import java.util.List;
 
 public class CampForm {
     private JFrame frame;
-    private JButton parkTracked;
-    private JButton parkExcavator;
+    private JButton parkTransport;
     private JButton takeTransport;
     private JButton addCamp;
     private JButton deleteCamp;
@@ -36,8 +35,7 @@ public class CampForm {
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setLayout(null);
-        frame.getContentPane().add(parkTracked);
-        frame.getContentPane().add(parkExcavator);
+        frame.getContentPane().add(parkTransport);
         frame.getContentPane().add(groupBoxTake);
         frame.getContentPane().add(drawCamps);
         frame.getContentPane().add(campsGroupBox);
@@ -50,8 +48,7 @@ public class CampForm {
         drawCamps = new DrawCamps(campCollection);
         borderTake = BorderFactory.createTitledBorder("Забрать транспорт");
         borderCamps = BorderFactory.createTitledBorder("Стоянки");
-        parkTracked = new JButton("Припарковать гусеничную машину");
-        parkExcavator = new JButton("Припарковать экскаватор");
+        parkTransport = new JButton("Припарковать транспорт");
         putTransportIntoList = new JButton("Поместить в список");
         addCamp = new JButton("Добавить стоянку");
         deleteCamp = new JButton("Удалить стоянку");
@@ -69,13 +66,9 @@ public class CampForm {
         groupBoxTake.add(placeTransport);
         groupBoxTake.add(takeTransport);
         groupBoxTake.add(putTransportIntoList);
-        parkTracked.setBounds(850, 12, 300, 40);
-        parkTracked.addActionListener(e -> {
-            createTracked();
-        });
-        parkExcavator.setBounds(850, 60, 300, 40);
-        parkExcavator.addActionListener(e -> {
-            createExcavator();
+        parkTransport.setBounds(850, 10, 300, 90);
+        parkTransport.addActionListener(e -> {
+            createTransport();
         });
         groupBoxTake.setBounds(880, 110, 250, 160);
         placeText.setBounds(90, 20, 60, 30);
@@ -115,38 +108,15 @@ public class CampForm {
         countPlaceTransport.setBounds(85, 20, 30, 30);
     }
 
-    private void createTracked() {
+    private void createTransport() {
         if (listBoxCamps.getSelectedIndex() >= 0) {
-            JColorChooser colorDialog = new JColorChooser();
-            JOptionPane.showMessageDialog(frame, colorDialog);
-            if (colorDialog.getColor() != null) {
-                TrackedVehicle transport = new TrackedVehicle(100, 1000, colorDialog.getColor());
+            TransportConfigPanel configPanel = new TransportConfigPanel(frame);
+            Transport transport = configPanel.getTransport();
+            if (transport != null) {
                 if (campCollection.get(listBoxCamps.getSelectedValue()).add(transport)) {
                     frame.repaint();
                 } else {
                     JOptionPane.showMessageDialog(frame, "Стоянка переполнена");
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void createExcavator() {
-        if (listBoxCamps.getSelectedIndex() >= 0) {
-            JColorChooser colorDialog = new JColorChooser();
-            JOptionPane.showMessageDialog(frame, colorDialog);
-            if (colorDialog.getColor() != null) {
-                JColorChooser otherColorDialog = new JColorChooser();
-                JOptionPane.showMessageDialog(frame, otherColorDialog);
-                if (otherColorDialog.getColor() != null) {
-                    TrackedVehicle transport = new Excavator(100, 1000, colorDialog.getColor(), otherColorDialog.getColor(),
-                            true, true, true, 0, 0);
-                    if (campCollection.get(listBoxCamps.getSelectedValue()).add(transport)) {
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Стоянка переполнена");
-                    }
                 }
             }
         } else {
