@@ -44,23 +44,6 @@ public class Camp<T extends Transport, G extends Adding> {
         return null;
     }
 
-    public boolean equal(int count) {
-        int countPlaces = 0;
-        for (Object object : places) {
-            if (object != null) {
-                countPlaces++;
-            }
-        }
-        return countPlaces == count;
-    }
-
-    public boolean inequal(int count) {
-        if (equal(count)) {
-            return true;
-        }
-        return false;
-    }
-
     public void draw(Graphics g) {
         int changeHeight = 10;
         int width = pictureWidth / placeSizeWidth;
@@ -84,11 +67,14 @@ public class Camp<T extends Transport, G extends Adding> {
         }
     }
 
-
     public T get(int index) {
         if (index > -1 && index < places.size()) {
             return places.get(index);
         }
         return null;
+    }
+
+    public void clear() {
+        places.clear();
     }
 }

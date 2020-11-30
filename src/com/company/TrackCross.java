@@ -42,4 +42,9 @@ public class TrackCross implements Adding {
             g.drawLine(startPosX + 175, startPosY + 110, startPosX + 175, startPosY + 130);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '.' + countTrack.ordinal();
+    }
 }

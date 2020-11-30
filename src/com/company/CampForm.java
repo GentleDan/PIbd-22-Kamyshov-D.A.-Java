@@ -2,6 +2,7 @@ package com.company;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,11 +27,18 @@ public class CampForm {
     private DefaultListModel<String> campList;
     private List<TrackedVehicle> listTransport;
     private CampCollection campCollection;
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenu campFileMenu;
+    private JMenuItem saveFile;
+    private JMenuItem loadFile;
+    private JMenuItem saveCamp;
+    private JMenuItem loadCamp;
 
     public CampForm() {
         initialization();
         frame = new JFrame("Стоянки");
-        frame.setSize(1200, 564);
+        frame.setSize(1200, 575);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
@@ -39,6 +47,7 @@ public class CampForm {
         frame.getContentPane().add(groupBoxTake);
         frame.getContentPane().add(drawCamps);
         frame.getContentPane().add(campsGroupBox);
+        frame.setJMenuBar(menuBar);
         frame.repaint();
     }
 
@@ -106,6 +115,32 @@ public class CampForm {
         campsGroupBox.add(deleteCamp);
         placeCountText.setBounds(40, 20, 60, 30);
         countPlaceTransport.setBounds(85, 20, 30, 30);
+
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu("Файл");
+        saveFile = new JMenuItem("Сохранить");
+        saveFile.addActionListener(e -> {
+            saveFile();
+        });
+        loadFile = new JMenuItem("Загрузить");
+        loadFile.addActionListener(e -> {
+            loadFile();
+        });
+        campFileMenu = new JMenu("Стоянка");
+        saveCamp = new JMenuItem("Сохранить");
+        saveCamp.addActionListener(e -> {
+            saveCamp();
+        });
+        loadCamp = new JMenuItem("Загрузить");
+        loadCamp.addActionListener(e -> {
+            loadCamp();
+        });
+        fileMenu.add(saveFile);
+        fileMenu.add(loadFile);
+        campFileMenu.add(saveCamp);
+        campFileMenu.add(loadCamp);
+        menuBar.add(fileMenu);
+        menuBar.add(campFileMenu);
     }
 
     private void createTransport() {
@@ -196,6 +231,66 @@ public class CampForm {
             excavatorForm.setTracked(listTransport.get(0));
             listTransport.remove(0);
             frame.repaint();
+        }
+    }
+
+    private void saveFile() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (campCollection.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadFile() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (campCollection.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void saveCamp() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        if (listBoxCamps.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Выберите стоянку", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (campCollection.saveCamp(fileSaveDialog.getSelectedFile().getPath(), listBoxCamps.getSelectedValue())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadCamp() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (campCollection.loadCamp(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

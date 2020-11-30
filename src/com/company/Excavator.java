@@ -58,7 +58,7 @@ public class Excavator extends TrackedVehicle {
         this.dopColor = dopColor;
     }
 
-    public Excavator(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean flasher, boolean ladle, boolean stand, int add, int number) {
+    public Excavator(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean flasher, boolean ladle, boolean stand) {
         super(maxSpeed, weight, mainColor, 100, 100);
         this.maxSpeed = maxSpeed;
         this.weight = weight;
@@ -67,16 +67,30 @@ public class Excavator extends TrackedVehicle {
         this.flasher = flasher;
         this.ladle = ladle;
         this.stand = stand;
-        switch (add) {
-            case 0:
-                adding = new TrackCircle(number);
-                break;
-            case 1:
-                adding = new TrackCross(number);
-                break;
-            case 2:
-                adding = new TrackRect(number);
-                break;
+    }
+
+    public Excavator(String info) {
+        super("");
+        String[] strs = info.split(separator);
+        if (strs.length == 8) {
+            maxSpeed = Integer.parseInt(strs[0]);
+            weight = Float.parseFloat(strs[1]);
+            mainColor = Color.decode(strs[2]);
+            dopColor = Color.decode(strs[3]);
+            flasher = Boolean.parseBoolean(strs[4]);
+            ladle = Boolean.parseBoolean(strs[5]);
+            stand = Boolean.parseBoolean(strs[6]);
+            if (strs[7].contains("null")) {
+                adding = null;
+            } else {
+                String[] argsAddition = strs[7].split("\\.");
+                int digit = Integer.parseInt(argsAddition[1]);
+                switch (argsAddition[0]) {
+                    case "TrackCircle" -> adding = new TrackCircle(digit);
+                    case "TrackCross" -> adding = new TrackCross(digit);
+                    case "TrackRect" -> adding = new TrackRect(digit);
+                }
+            }
         }
     }
 
@@ -126,5 +140,11 @@ public class Excavator extends TrackedVehicle {
         if (adding != null) {
             adding.draw(g, startPosX, startPosY, trackedVehicleWidth, trackedVehicleHeight);
         }
+    }
+
+    @Override
+    public String toString() {
+        return maxSpeed + separator + weight + separator + mainColor.getRGB() + separator + dopColor.getRGB() + separator
+                + flasher + separator + ladle + separator + stand + separator + adding;
     }
 }

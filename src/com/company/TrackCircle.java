@@ -39,4 +39,9 @@ public class TrackCircle implements Adding {
             g.drawOval(startPosX + 165, startPosY + 110, excavatorWidth - 80, excavatorHeight - 80);
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '.' + countTrack.ordinal();
+    }
 }

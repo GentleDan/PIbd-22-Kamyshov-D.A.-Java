@@ -50,7 +50,7 @@ public class TransportConfigPanel extends JDialog {
                 switch (label.getText()) {
                     case "Гусеничная машина" -> transport = new TrackedVehicle((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.WHITE);
                     case "Экскаватор" -> transport = new Excavator((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.WHITE, Color.WHITE,
-                            checkBoxFlasher.isSelected(), checkBoxLadle.isSelected(), checkBoxStand.isSelected(), -1, -1);
+                            checkBoxFlasher.isSelected(), checkBoxLadle.isSelected(), checkBoxStand.isSelected());
                 }
             }
 
