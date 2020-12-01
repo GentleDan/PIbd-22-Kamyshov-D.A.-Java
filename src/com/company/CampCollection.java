@@ -111,6 +111,9 @@ public class CampCollection {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
+        if (!campStages.containsKey(key)) {
+            return false;
+        }
         try (FileWriter fileWriter = new FileWriter(filename, false)) {
             if (campStages.containsKey(key))
                 fileWriter.write("Camp" + separator + key + '\n');
