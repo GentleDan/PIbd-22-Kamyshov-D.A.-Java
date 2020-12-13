@@ -1,9 +1,7 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.security.KeyException;
 import java.util.*;
 
 public class CampCollection {
@@ -44,7 +42,7 @@ public class CampCollection {
         return null;
     }
 
-    public boolean saveData(String filename) {
+    public void saveData(String filename) throws IOException {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
@@ -52,39 +50,33 @@ public class CampCollection {
             fileWriter.write("CampCollection\n");
             for (Map.Entry<String, Camp<Transport, Adding>> level : campStages.entrySet()) {
                 fileWriter.write("Camp" + separator + level.getKey() + '\n');
-                Transport transport;
-                for (int i = 0; (transport = level.getValue().get(i)) != null; i++) {
-                    if (transport.getClass().getSimpleName().equals("TrackedVehicle")) {
+                Transport vehicle;
+                for (int i = 0; (vehicle = level.getValue().get(i)) != null; i++) {
+                    if (vehicle.getClass().getSimpleName().equals("Truck")) {
                         fileWriter.write("TrackedVehicle" + separator);
-                    } else if (transport.getClass().getSimpleName().equals("Excavator")) {
+                    } else if (vehicle.getClass().getSimpleName().equals("Tanker")) {
                         fileWriter.write("Excavator" + separator);
                     }
-                    fileWriter.write(transport.toString() + '\n');
+                    fileWriter.write(vehicle.toString() + '\n');
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean loadData(String filename) {
+    public void loadData(String filename) throws IOException, CampOverflowException {
         if (!(new File(filename).exists())) {
-            return false;
+            throw new FileNotFoundException("Файл " + filename + " не найден");
         }
-
         try (FileReader fileReader = new FileReader(filename)) {
             Scanner scanner = new Scanner(fileReader);
             if (scanner.nextLine().contains("CampCollection")) {
                 campStages.clear();
             } else {
-                return false;
+                throw new IllegalArgumentException("Неверный формат файла");
             }
-
-            Transport transport = null;
+            Transport vehicle = null;
             String key = "";
             String line;
-
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
                 if (line.contains("Camp")) {
@@ -92,47 +84,44 @@ public class CampCollection {
                     campStages.put(key, new Camp<>(pictureWidth, pictureHeight));
                 } else if (line.contains(separator)) {
                     if (line.contains("TrackedVehicle")) {
-                        transport = new TrackedVehicle(line.split(separator)[1]);
+                        vehicle = new TrackedVehicle(line.split(separator)[1]);
                     } else if (line.contains("Excavator")) {
-                        transport = new Excavator(line.split(separator)[1]);
+                        vehicle = new Excavator(line.split(separator)[1]);
                     }
-                    if (!(campStages.get(key).add(transport))) {
-                        return false;
+                    if (!(campStages.get(key).add(vehicle))) {
+                        throw new CampOverflowException();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean saveCamp(String filename, String key) {
+    public void saveCamp(String filename, String key) throws IOException, KeyException {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
-        if (!campStages.containsKey(key)) {
-            return false;
-        }
         try (FileWriter fileWriter = new FileWriter(filename, false)) {
-            if (campStages.containsKey(key))
+            if (campStages.containsKey(key)) {
                 fileWriter.write("Camp" + separator + key + '\n');
-            Transport transport;
-            for (int i = 0; (transport = campStages.get(key).get(i)) != null; i++) {
-                if (transport.getClass().getSimpleName().equals("TrackedVehicle")) {
+            } else {
+                throw new KeyException();
+            }
+            Transport vehicle;
+            for (int i = 0; (vehicle = campStages.get(key).get(i)) != null; i++) {
+                if (vehicle.getClass().getSimpleName().equals("TrackedVehicle")) {
                     fileWriter.write("TrackedVehicle" + separator);
-                } else if (transport.getClass().getSimpleName().equals("Excavator")) {
+                } else if (vehicle.getClass().getSimpleName().equals("Excavator")) {
                     fileWriter.write("Excavator" + separator);
                 }
-                fileWriter.write(transport.toString() + '\n');
+                fileWriter.write(vehicle.toString() + '\n');
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean loadCamp(String filename) {
+    public void loadCamp(String filename) throws IOException, CampOverflowException {
+        if (!(new File(filename).exists())) {
+            throw new FileNotFoundException("Файл " + filename + " не найден");
+        }
         try (FileReader fileReader = new FileReader(filename)) {
             Scanner scanner = new Scanner(fileReader);
             String key;
@@ -146,26 +135,23 @@ public class CampCollection {
                     campStages.put(key, new Camp<>(pictureWidth, pictureHeight));
                 }
             } else {
-                return false;
+                throw new IllegalArgumentException("Неверный формат файла");
             }
-            Transport transport = null;
+            Transport vehicle = null;
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
                 if (line.contains(separator)) {
                     if (line.contains("TrackedVehicle")) {
-                        transport = new TrackedVehicle(line.split(separator)[1]);
+                        vehicle = new TrackedVehicle(line.split(separator)[1]);
                     } else if (line.contains("Excavator")) {
-                        transport = new Excavator(line.split(separator)[1]);
+                        vehicle = new Excavator(line.split(separator)[1]);
                     }
-                    if (!(campStages.get(key).add(transport))) {
-                        return false;
+                    if (!(campStages.get(key).add(vehicle))) {
+                        throw new CampOverflowException();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
     public Transport get(String name, int index) {

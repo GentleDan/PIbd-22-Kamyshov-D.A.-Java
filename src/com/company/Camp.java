@@ -27,21 +27,21 @@ public class Camp<T extends Transport, G extends Adding> {
         places = new ArrayList<>();
     }
 
-    public boolean add(T vehicle) {
-        if (places.size() < maxCount) {
-            places.add(vehicle);
-            return true;
+    public boolean add(T vehicle) throws CampOverflowException {
+        if (places.size() >= maxCount) {
+            throw new CampOverflowException();
         }
-        return false;
+        places.add(vehicle);
+        return true;
     }
 
-    public T delete(int index) {
-        if (index >= 0 && index < maxCount && places.get(index) != null) {
-            T truck = places.get(index);
-            places.remove(index);
-            return truck;
+    public T delete(int index) throws CampNotFoundException {
+        if (index < 0 || index >= places.size()) {
+            throw new CampNotFoundException(index);
         }
-        return null;
+        T vehicle = places.get(index);
+        places.remove(index);
+        return vehicle;
     }
 
     public void draw(Graphics g) {
