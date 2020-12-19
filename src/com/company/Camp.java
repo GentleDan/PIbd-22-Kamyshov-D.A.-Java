@@ -1,10 +1,10 @@
 package com.company;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-public class Camp<T extends Transport, G extends Adding> {
+public class Camp<T extends Transport, G extends Adding> implements Iterator<T>, Iterable<T> {
 
     private final List<T> places;
 
@@ -18,6 +18,8 @@ public class Camp<T extends Transport, G extends Adding> {
 
     private final int placeSizeHeight = 160;
 
+    private int currentIndex;
+
     public Camp(int picWidth, int picHeight) {
         pictureWidth = picWidth;
         pictureHeight = picHeight;
@@ -25,11 +27,15 @@ public class Camp<T extends Transport, G extends Adding> {
         int height = picHeight / placeSizeHeight;
         maxCount = width * height;
         places = new ArrayList<>();
+        currentIndex = -1;
     }
 
-    public boolean add(T vehicle) throws CampOverflowException {
+    public boolean add(T vehicle) throws CampOverflowException, CampAlreadyHaveException {
         if (places.size() >= maxCount) {
             throw new CampOverflowException();
+        }
+        if (places.contains(vehicle)) {
+            throw new CampAlreadyHaveException();
         }
         places.add(vehicle);
         return true;
@@ -74,7 +80,31 @@ public class Camp<T extends Transport, G extends Adding> {
         return null;
     }
 
+    public void sort() {
+        places.sort((Comparator<? super T>) new TrackedVehicleComparer());
+    }
+
     public void clear() {
         places.clear();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentIndex < places.size() - 1;
+    }
+
+    @Override
+    public T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        currentIndex++;
+        return places.get(currentIndex);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        currentIndex = -1;
+        return this;
     }
 }

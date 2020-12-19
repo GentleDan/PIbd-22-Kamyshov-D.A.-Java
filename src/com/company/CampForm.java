@@ -42,6 +42,7 @@ public class CampForm {
     private JMenuItem saveCamp;
     private JMenuItem loadCamp;
     private Logger logger;
+    private JButton sortTransport;
 
     public CampForm() {
         initialization();
@@ -55,6 +56,7 @@ public class CampForm {
         frame.getContentPane().add(groupBoxTake);
         frame.getContentPane().add(drawCamps);
         frame.getContentPane().add(campsGroupBox);
+        frame.getContentPane().add(sortTransport);
         frame.setJMenuBar(menuBar);
         frame.repaint();
     }
@@ -85,9 +87,14 @@ public class CampForm {
         groupBoxTake.add(placeTransport);
         groupBoxTake.add(takeTransport);
         groupBoxTake.add(putTransportIntoList);
-        parkTransport.setBounds(850, 10, 300, 90);
+        parkTransport.setBounds(850, 10, 300, 45);
         parkTransport.addActionListener(e -> {
             createTransport();
+        });
+        sortTransport = new JButton("Сортировать");
+        sortTransport.setBounds(850, 55, 300, 45);
+        sortTransport.addActionListener(e -> {
+            sort();
         });
         groupBoxTake.setBounds(880, 110, 250, 160);
         placeText.setBounds(90, 20, 60, 30);
@@ -170,6 +177,9 @@ public class CampForm {
             }
         } catch (CampOverflowException e) {
             JOptionPane.showMessageDialog(frame, e.getMessage(), "Переполнение", JOptionPane.ERROR_MESSAGE);
+            logger.warn(e.getMessage());
+        } catch (CampAlreadyHaveException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "На стоянке уже есть такой транспорт", JOptionPane.ERROR_MESSAGE);
             logger.warn(e.getMessage());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
@@ -356,5 +366,15 @@ public class CampForm {
                 logger.fatal(e.getMessage());
             }
         }
+    }
+
+    private void sort() {
+        if (listBoxCamps.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Стоянка не выбрана", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        campCollection.get(listBoxCamps.getSelectedValue()).sort();
+        frame.repaint();
+        logger.info("Транспорт на стоянке " + listBoxCamps.getSelectedValue() + " отсортирован");
     }
 }

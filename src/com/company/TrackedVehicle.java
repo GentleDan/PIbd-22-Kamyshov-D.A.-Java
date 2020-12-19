@@ -2,7 +2,7 @@ package com.company;
 
 import java.awt.*;
 
-public class TrackedVehicle extends Vehicle {
+public class TrackedVehicle extends Vehicle implements Comparable<TrackedVehicle>{
 
     protected int trackedVehicleWidth = 100;
     protected int trackedVehicleHeight = 100;
@@ -103,5 +103,49 @@ public class TrackedVehicle extends Vehicle {
     @Override
     public String toString() {
         return maxSpeed + separator + weight + separator + mainColor.getRGB();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof TrackedVehicle trackedVehicleObject)) {
+            return false;
+        }
+        return equals(trackedVehicleObject);
+    }
+
+    public boolean equals(TrackedVehicle other) {
+        if (other == null) {
+            return false;
+        }
+        if (!this.getClass().getSimpleName().equals(other.getClass().getSimpleName())) {
+            return false;
+        }
+        if (maxSpeed != other.maxSpeed) {
+            return false;
+        }
+        if (weight != other.weight) {
+            return false;
+        }
+        if (mainColor.getRGB() != other.mainColor.getRGB()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(TrackedVehicle trackedVehicle) {
+        if (maxSpeed != trackedVehicle.maxSpeed) {
+            return Integer.compare(maxSpeed, trackedVehicle.maxSpeed);
+        }
+        if (weight != trackedVehicle.weight) {
+            return Float.compare(weight, trackedVehicle.weight);
+        }
+        if (mainColor.getRGB() != trackedVehicle.mainColor.getRGB()) {
+            return Integer.compare(mainColor.getRGB(), trackedVehicle.getMainColor().getRGB());
+        }
+        return 0;
     }
 }

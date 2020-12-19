@@ -50,20 +50,20 @@ public class CampCollection {
             fileWriter.write("CampCollection\n");
             for (Map.Entry<String, Camp<Transport, Adding>> level : campStages.entrySet()) {
                 fileWriter.write("Camp" + separator + level.getKey() + '\n');
-                Transport vehicle;
-                for (int i = 0; (vehicle = level.getValue().get(i)) != null; i++) {
-                    if (vehicle.getClass().getSimpleName().equals("Truck")) {
+
+                for (Transport transport : level.getValue()) {
+                    if (transport.getClass().getSimpleName().equals("TrackedVehicle")) {
                         fileWriter.write("TrackedVehicle" + separator);
-                    } else if (vehicle.getClass().getSimpleName().equals("Tanker")) {
+                    } else if (transport.getClass().getSimpleName().equals("Excavator")) {
                         fileWriter.write("Excavator" + separator);
                     }
-                    fileWriter.write(vehicle.toString() + '\n');
+                    fileWriter.write(transport.toString() + '\n');
                 }
             }
         }
     }
 
-    public void loadData(String filename) throws IOException, CampOverflowException {
+    public void loadData(String filename) throws IOException, CampOverflowException, CampAlreadyHaveException {
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("Файл " + filename + " не найден");
         }
@@ -106,19 +106,19 @@ public class CampCollection {
             } else {
                 throw new KeyException();
             }
-            Transport vehicle;
-            for (int i = 0; (vehicle = campStages.get(key).get(i)) != null; i++) {
-                if (vehicle.getClass().getSimpleName().equals("TrackedVehicle")) {
+            Transport transport;
+            for (int i = 0; (transport = campStages.get(key).get(i)) != null; i++) {
+                if (transport.getClass().getSimpleName().equals("TrackedVehicle")) {
                     fileWriter.write("TrackedVehicle" + separator);
-                } else if (vehicle.getClass().getSimpleName().equals("Excavator")) {
+                } else if (transport.getClass().getSimpleName().equals("Excavator")) {
                     fileWriter.write("Excavator" + separator);
                 }
-                fileWriter.write(vehicle.toString() + '\n');
+                fileWriter.write(transport.toString() + '\n');
             }
         }
     }
 
-    public void loadCamp(String filename) throws IOException, CampOverflowException {
+    public void loadCamp(String filename) throws IOException, CampOverflowException, CampAlreadyHaveException {
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("Файл " + filename + " не найден");
         }

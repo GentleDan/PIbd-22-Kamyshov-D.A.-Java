@@ -1,14 +1,17 @@
 package com.company;
 
+import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
+import java.util.Iterator;
 
-public class Excavator extends TrackedVehicle {
+public class Excavator extends TrackedVehicle implements Comparable<TrackedVehicle>, Iterator<String> {
 
     public Color dopColor;
     public boolean flasher;
     public boolean ladle;
     public boolean stand;
     private Adding adding;
+    private int current;
 
     public float getStartPosX() {
         return startPosX;
@@ -67,6 +70,7 @@ public class Excavator extends TrackedVehicle {
         this.flasher = flasher;
         this.ladle = ladle;
         this.stand = stand;
+        current = -1;
     }
 
     public Excavator(String info) {
@@ -147,4 +151,123 @@ public class Excavator extends TrackedVehicle {
         return maxSpeed + separator + weight + separator + mainColor.getRGB() + separator + dopColor.getRGB() + separator
                 + flasher + separator + ladle + separator + stand + separator + adding;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof Excavator excavatorObject)) {
+            return false;
+        }
+        return equals(excavatorObject);
+    }
+
+    public boolean equals(Excavator other) {
+        if (other == null) {
+            return false;
+        }
+        if (!this.getClass().getSimpleName().equals(other.getClass().getSimpleName())) {
+            return false;
+        }
+        if (maxSpeed != other.maxSpeed) {
+            return false;
+        }
+        if (weight != other.weight) {
+            return false;
+        }
+        if (mainColor.getRGB() != other.mainColor.getRGB()) {
+            return false;
+        }
+        if (dopColor.getRGB() != other.dopColor.getRGB()) {
+            return false;
+        }
+        if (flasher != other.flasher) {
+            return false;
+        }
+        if (ladle != other.ladle) {
+            return false;
+        }
+        if (stand != other.stand) {
+            return false;
+        }
+        if (adding != null && other.adding != null && !(adding.toString().equals(other.adding.toString()))) {
+            return false;
+        }
+        if (adding == null ^ other.adding == null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int compareTo(TrackedVehicle trackedVehicle) {
+        Excavator excavator = (Excavator) trackedVehicle;
+        if (dopColor.getRGB() != excavator.dopColor.getRGB()) {
+            return Integer.compare(dopColor.getRGB(), excavator.getDopColor().getRGB());
+        }
+        if (flasher != excavator.flasher) {
+            return Boolean.compare(flasher, excavator.flasher);
+        }
+        if (ladle != excavator.ladle) {
+            return Boolean.compare(ladle, excavator.ladle);
+        }
+        if (stand != excavator.stand) {
+            return Boolean.compare(stand, excavator.stand);
+        }
+        if (adding == null && excavator.adding != null) {
+            return 1;
+        }
+        if (adding != null && excavator.adding == null) {
+            return -1;
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if(current > 7){
+            current = -1;
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String next() {
+        current++;
+        switch (current){
+            case 0 -> {
+                return String.valueOf(maxSpeed);
+            }
+            case 1 -> {
+                return String.valueOf(weight);
+            }
+            case 2 -> {
+                return String.valueOf(mainColor.getRGB());
+            }
+            case 3 -> {
+                return String.valueOf(dopColor.getRGB());
+            }
+            case 4 -> {
+                return String.valueOf(flasher);
+            }
+            case 5 -> {
+                return String.valueOf(ladle);
+            }
+            case 6 -> {
+                return String.valueOf(stand);
+            }
+            case 7 -> {
+                return String.valueOf(adding);
+            }
+        }
+        return null;
+    }
+
+/*    private void printInfo(){
+        for(String info : this){
+            System.out.println(info);
+        }
+    }*/
 }
