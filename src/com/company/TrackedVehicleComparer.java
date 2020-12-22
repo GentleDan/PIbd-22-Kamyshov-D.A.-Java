@@ -9,7 +9,6 @@ public class TrackedVehicleComparer implements Comparator<Vehicle> {
         if (!first.getClass().getSimpleName().equals(second.getClass().getSimpleName())) {
             return first.getClass().getSimpleName().compareTo(second.getClass().getSimpleName());
         }
-
         int result;
         switch (first.getClass().getSimpleName()) {
             case "TrackedVehicle" -> {

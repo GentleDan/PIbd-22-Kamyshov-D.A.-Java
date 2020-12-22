@@ -4,7 +4,7 @@ import javax.swing.plaf.metal.MetalButtonUI;
 import java.awt.*;
 import java.util.Iterator;
 
-public class Excavator extends TrackedVehicle implements Comparable<TrackedVehicle>, Iterator<String> {
+public class Excavator extends TrackedVehicle {
 
     public Color dopColor;
     public boolean flasher;
@@ -226,7 +226,7 @@ public class Excavator extends TrackedVehicle implements Comparable<TrackedVehic
 
     @Override
     public boolean hasNext() {
-        if(current > 7){
+        if (current > 7) {
             current = -1;
             return false;
         }
@@ -236,7 +236,7 @@ public class Excavator extends TrackedVehicle implements Comparable<TrackedVehic
     @Override
     public String next() {
         current++;
-        switch (current){
+        switch (current) {
             case 0 -> {
                 return String.valueOf(maxSpeed);
             }
@@ -265,9 +265,9 @@ public class Excavator extends TrackedVehicle implements Comparable<TrackedVehic
         return null;
     }
 
-/*    private void printInfo(){
-        for(String info : this){
-            System.out.println(info);
-        }
-    }*/
+    @Override
+    public Iterator<String> iterator() {
+        return this;
+    }
+
 }

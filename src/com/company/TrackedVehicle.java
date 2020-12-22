@@ -1,19 +1,22 @@
 package com.company;
 
 import java.awt.*;
+import java.util.Iterator;
 
-public class TrackedVehicle extends Vehicle implements Comparable<TrackedVehicle>{
+public class TrackedVehicle extends Vehicle implements Comparable<TrackedVehicle>, Iterator<String>, Iterable<String> {
 
     protected int trackedVehicleWidth = 100;
     protected int trackedVehicleHeight = 100;
     protected double changeWidth = 3.1;
     protected double changeHeight = 2.1;
     protected String separator = ";";
+    private int current;
 
     public TrackedVehicle(int maxSpeed, float weight, Color mainColor) {
         this.maxSpeed = maxSpeed;
         this.weight = weight;
         this.mainColor = mainColor;
+        current = -1;
     }
 
     protected TrackedVehicle(int maxSpeed, float weight, Color mainColor, int carWidth, int carHeight) {
@@ -147,5 +150,36 @@ public class TrackedVehicle extends Vehicle implements Comparable<TrackedVehicle
             return Integer.compare(mainColor.getRGB(), trackedVehicle.getMainColor().getRGB());
         }
         return 0;
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return this;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (current > 2) {
+            current = -1;
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String next() {
+        current++;
+        switch (current) {
+            case 0 -> {
+                return String.valueOf(maxSpeed);
+            }
+            case 1 -> {
+                return String.valueOf(weight);
+            }
+            case 2 -> {
+                return String.valueOf(mainColor.getRGB());
+            }
+        }
+        return null;
     }
 }
